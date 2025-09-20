@@ -1,0 +1,35 @@
+name: execute
+run-name: Execute
+on:
+  schedule:
+    - cron: "0 4 * * 0" # every sunday at 4am UTC
+
+jobs:
+  create-or-update-yearly-playlists:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
+      - name: setup python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: 'pip'
+      - run: pip install -r requirements.txt
+      - name: execute script
+        env:
+          SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+          SPOTIFY_AUTH_CACHE: ${{ secrets.SPOTIFY_AUTH_CACHE }}
+          SPOTIFY_REDIRECT_URI: ${{ secrets.SPOTIFY_REDIRECT_URI }}
+          SOURCE_PLAYLIST_NAMES: ${{ env.SOURCE_PLAYLIST_NAMES }}
+          YEARS: ${{ env.YEARS }}
+          YEARLY_PLAYLIST_NAME_PREFIX: ${{ env.YEARLY_PLAYLIST_NAME_PREFIX }} 
+          YEARLY_PLAYLIST_NAME_SUFFIX: ${{ env.YEARLY_PLAYLIST_NAME_SUFFIX }} 
+        run: python main.py
+      - name: cache spotify auth info
+        id: cache-spotify-auth
+        uses: actions/cache@v4
+        with:
+          path: .cache
+          key: cache-spotify-auth

@@ -22,10 +22,10 @@ jobs:
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
           SPOTIFY_AUTH_CACHE: ${{ secrets.SPOTIFY_AUTH_CACHE }}
           SPOTIFY_REDIRECT_URI: ${{ secrets.SPOTIFY_REDIRECT_URI }}
-          SOURCE_PLAYLIST_NAMES: ${{ env.SOURCE_PLAYLIST_NAMES }}
-          YEARS: ${{ env.YEARS }}
-          YEARLY_PLAYLIST_NAME_PREFIX: ${{ env.YEARLY_PLAYLIST_NAME_PREFIX }} 
-          YEARLY_PLAYLIST_NAME_SUFFIX: ${{ env.YEARLY_PLAYLIST_NAME_SUFFIX }} 
+          SOURCE_PLAYLIST_NAMES: ${{ vars.SOURCE_PLAYLIST_NAMES }}
+          YEARS: ${{ vars.YEARS }}
+          YEARLY_PLAYLIST_NAME_PREFIX: ${{ vars.YEARLY_PLAYLIST_NAME_PREFIX }} 
+          YEARLY_PLAYLIST_NAME_SUFFIX: ${{ vars.YEARLY_PLAYLIST_NAME_SUFFIX }} 
         run: python main.py
       - name: cache spotify auth info
         id: cache-spotify-auth

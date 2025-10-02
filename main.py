@@ -11,6 +11,12 @@ from dotenv import load_dotenv
 
 local_run = os.getenv('LOCAL_RUN', 'false')
 
+#print all environment variables
+print("**** VARIÁVEIS DE AMBIENTE ****")
+for key, value in os.environ.items():
+    print(f'{key}: {value}')
+print("*******************************")
+
 if local_run.lower() == 'true':
     load_dotenv()
 

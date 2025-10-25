@@ -12,11 +12,11 @@ You configure Yearify using environment variables to specify:
 - The source playlists (e.g., your favorite mixes)
 - The years you want to organize songs by
 
-For example, set the environment variable `SOURCE_PLAYLIST_NAMES` to `'["Running Playlist", "Road Trip"]'` and `YEARS` to `'[2024, 2025]'`.
+For example, set the environment variable `SOURCE_PLAYLIST_NAMES` to `Running Playlist;Road Trip` and `YEARS` to `2024;2025`. The default separator for these lists is a semicolon (`;`), but you can change it using the `SEPARATOR` environment variable.
 
 Yearify will create new playlists named **2024** and **2025**, each containing all songs from your source playlists that were released in the corresponding year.
 
-You can further customize the playlist names using the environment variables `YEARLY_PLAYLIST_NAME_PREFIX` and `YEARLY_PLAYLIST_NAME_SUFFIX`. For example, if you set `YEARLY_PLAYLIST_NAME_PREFIX` to `My ` and `YEARLY_PLAYLIST_NAME_SUFFIX` to `personal favorites`, the playlists will be named **My 2024 personal favorites** and **My 2025 personal favorites**.
+You can further customize the playlist names using the environment variables `YEARLY_PLAYLIST_NAME_PREFIX` and `YEARLY_PLAYLIST_NAME_SUFFIX`. For example, if you set `YEARLY_PLAYLIST_NAME_PREFIX` to `My ` and `YEARLY_PLAYLIST_NAME_SUFFIX` to ` personal favorites`, the playlists will be named **My 2024 personal favorites** and **My 2025 personal favorites**.
 
 ## Environment Setup
 

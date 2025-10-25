@@ -11,26 +11,21 @@ from dotenv import load_dotenv
 
 local_run = os.getenv('LOCAL_RUN', 'false')
 
-#print all environment variables
-print("**** VARIÁVEIS DE AMBIENTE ****")
-for key, value in os.environ.items():
-    print(f'{key}: {value}')
-print("*******************************")
-
 if local_run.lower() == 'true':
     load_dotenv()
 
 client_id = os.getenv('SPOTIFY_CLIENT_ID')
 client_secret = os.getenv('SPOTIFY_CLIENT_SECRET')
 redirect_uri = os.getenv('SPOTIFY_REDIRECT_URI')
-source_playlist_names = json.loads(os.getenv('SOURCE_PLAYLIST_NAMES', '[]'))
-years = json.loads(os.getenv('YEARS', '[]'))
+separator = os.getenv('SEPARATOR', ';')
+source_playlist_names = os.getenv('SOURCE_PLAYLIST_NAMES', '').split(separator)
+years = os.getenv('YEARS', '').split(separator)
 yearly_playlist_prefix = os.getenv('YEARLY_PLAYLIST_NAME_PREFIX', '')
 yearly_playlist_suffix = os.getenv('YEARLY_PLAYLIST_NAME_SUFFIX', '')
 
 local_cache_exists = Path('.cache').is_file()
 
-if not local_cache_exists and 'SPOTIFY_AUTH_CACHE' in os.environ:
+if not local_cache_exists and 'SPOTIFY_AUTH_CACHE' in os.environ and os.environ['SPOTIFY_AUTH_CACHE'].strip() != '':
     auth_cache = os.environ['SPOTIFY_AUTH_CACHE']
 
     with open('.cache', 'w', encoding='utf-8') as cache_file:
@@ -64,10 +59,11 @@ for playlist in my_playlists['items']:
             existing_yearly_playlists[year] = { 'id': playlist['id'], 'name': playlist['name'] }
 
 for playlist in playlists_to_be_processed:
+    print(f'Processing playlist {playlist['name']}...')
     tracks = []
     results = sp.playlist_items(playlist['id'], additional_types=['track'])
     if results is None or 'items' not in results:
-        print(f'No tracks found in playlist: {playlist['name']}')
+        print(f'\tNo tracks found in playlist: {playlist['name']}')
         continue
 
     tracks.extend(results['items'])
@@ -87,17 +83,17 @@ for playlist in playlists_to_be_processed:
                 tracks_to_add[release_year].append({ 'id': track['id'], 'name': track['name'], 'uri': track['uri'] })
 
     for year, tracks in tracks_to_add.items():
-        print(f'Processing year {year}...')
+        print(f'\tProcessing year {year}...')
         if tracks:
             if existing_yearly_playlists.get(year):
-                print(f'\tPlaylist for year {year} already exists.')
+                print(f'\t\tPlaylist for year {year} already exists.')
                 existing_playlist = existing_yearly_playlists[year]
 
                 existing_tracks = []
 
                 results_existing_tracks = sp.playlist_items(existing_playlist['id'], additional_types=['track'])
                 if results_existing_tracks is None or 'items' not in results_existing_tracks:
-                    print(f'\t\tNo tracks found in playlist "{existing_playlist['name']}"')
+                    print(f'\t\t\tNo tracks found in playlist "{existing_playlist['name']}"')
                     continue
 
                 existing_tracks.extend(results_existing_tracks['items'])
@@ -105,9 +101,9 @@ for playlist in playlists_to_be_processed:
                 for track in tracks:
                     if track['id'] not in [item['track']['id'] for item in existing_tracks if item['track']]:
                         sp.playlist_add_items(existing_playlist['id'], [track['uri']])
-                        print(f'\t\tAdded track "{track['name']}" to existing playlist "{existing_playlist['name']}".')
+                        print(f'\t\t\tAdded track "{track['name']}" to existing playlist "{existing_playlist['name']}".')
                     else:
-                        print(f'\t\tTrack "{track['name']}" already exists in playlist "{existing_playlist['name']}". Skipping.')
+                        print(f'\t\t\tTrack "{track['name']}" already exists in playlist "{existing_playlist['name']}". Skipping.')
                 continue
 
             yearly_playlist_name = f'{yearly_playlist_prefix}{year}{yearly_playlist_suffix}'
@@ -115,7 +111,7 @@ for playlist in playlists_to_be_processed:
             my_user = sp.current_user()
 
             if my_user is None or 'id' not in my_user:
-                print('\tCould not retrieve current user information.')
+                print('\t\tCould not retrieve current user information.')
                 continue
 
             new_playlist = sp.user_playlist_create(
@@ -125,8 +121,8 @@ for playlist in playlists_to_be_processed:
             )
 
             if new_playlist is None or 'id' not in new_playlist:
-                print(f'\tCould not create playlist "{yearly_playlist_name}"')
+                print(f'\t\tCould not create playlist "{yearly_playlist_name}"')
                 continue
 
             sp.playlist_add_items(new_playlist['id'], [track['uri'] for track in tracks])
-            print(f'\tCreated playlist "{new_playlist['name']}" with {len(tracks)} tracks.')
+            print(f'\t\tCreated playlist "{new_playlist['name']}" with {len(tracks)} tracks.')

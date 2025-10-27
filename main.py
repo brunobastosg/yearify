@@ -78,7 +78,7 @@ for playlist in playlists_to_be_processed:
     for item in tracks:
         track = item['track']
         if track and track.get('album') and track['album'].get('release_date'):
-            release_year = int(track['album']['release_date'][:4])
+            release_year = track['album']['release_date'][:4]
             if release_year in years:
                 tracks_to_add[release_year].append({ 'id': track['id'], 'name': track['name'], 'uri': track['uri'] })
 

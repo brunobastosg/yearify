@@ -20,8 +20,8 @@ redirect_uri = os.getenv('SPOTIFY_REDIRECT_URI')
 separator = os.getenv('SEPARATOR', ';')
 source_playlist_names = os.getenv('SOURCE_PLAYLIST_NAMES', '').split(separator)
 years = os.getenv('YEARS', '').split(separator)
-yearly_playlist_prefix = os.getenv('YEARLY_PLAYLIST_NAME_PREFIX', '')
-yearly_playlist_suffix = os.getenv('YEARLY_PLAYLIST_NAME_SUFFIX', '')
+yearly_playlist_prefix = os.getenv('YEARLY_PLAYLIST_NAME_PREFIX', '').strip('\'"')
+yearly_playlist_suffix = os.getenv('YEARLY_PLAYLIST_NAME_SUFFIX', '').strip('\'"')
 
 local_cache_exists = Path('.cache').is_file()
 

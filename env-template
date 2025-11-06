@@ -6,3 +6,7 @@ SOURCE_PLAYLIST_NAMES=
 YEARS=
 YEARLY_PLAYLIST_NAME_PREFIX=
 YEARLY_PLAYLIST_NAME_SUFFIX=
+
+# Note: For GitHub Actions, if your prefix or suffix contains spaces,
+# wrap them in quotes. The code will automatically remove the quotes.
+# Example: YEARLY_PLAYLIST_NAME_PREFIX="Favorites from "

@@ -4,7 +4,7 @@ Yearify is a Python script that organizes your Spotify songs into yearly playlis
 
 ## Prerequisites
 
-- Python 3.13 or higher
+- Python 3.15 or higher
 
 ## How It Works
 
@@ -37,5 +37,10 @@ You can further customize the playlist names using the environment variables `YE
   ```bash
   LOCAL_RUN=true python main.py
   ```
+
+To preview the planned playlist changes without creating or modifying Spotify playlists, add `--dry-run`:
+```bash
+LOCAL_RUN=true python main.py --dry-run
+```
 
 On first run, a browser window will open for Spotify authentication. Your credentials will be saved to a `.cache` file, so you won't need to authenticate again on subsequent runs.

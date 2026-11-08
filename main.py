@@ -1,6 +1,7 @@
 """
 Organizes songs into yearly playlists based on a list of an users' playlists and a list of years.
 """
+import argparse
 import json
 import os
 import sys
@@ -8,6 +9,14 @@ from pathlib import Path
 
 import spotipy
 from dotenv import load_dotenv
+
+parser = argparse.ArgumentParser(description='Organize songs into yearly Spotify playlists.')
+parser.add_argument(
+    '--dry-run',
+    action='store_true',
+    help='show planned playlist changes without creating or modifying playlists',
+)
+args = parser.parse_args()
 
 local_run = os.getenv('LOCAL_RUN', 'false')
 
@@ -39,6 +48,9 @@ sp = spotipy.Spotify(
         scope='playlist-modify-public'
     )
 )
+
+if args.dry_run:
+    print('Dry run enabled. No Spotify playlists will be created or modified.')
 
 my_playlists = sp.current_user_playlists()
 
@@ -98,15 +110,27 @@ for playlist in playlists_to_be_processed:
 
                 existing_tracks.extend(results_existing_tracks['items'])
 
+                while results_existing_tracks is not None and results_existing_tracks.get('next'):
+                    results_existing_tracks = sp.next(results_existing_tracks)
+                    if results_existing_tracks is not None and 'items' in results_existing_tracks:
+                        existing_tracks.extend(results_existing_tracks['items'])
+
                 for track in tracks:
                     if track['id'] not in [item['track']['id'] for item in existing_tracks if item['track']]:
-                        sp.playlist_add_items(existing_playlist['id'], [track['uri']])
-                        print(f'\t\t\tAdded track "{track['name']}" to existing playlist "{existing_playlist['name']}".')
+                        if args.dry_run:
+                            print(f'\t\t\tWould add track "{track['name']}" to existing playlist "{existing_playlist['name']}".')
+                        else:
+                            sp.playlist_add_items(existing_playlist['id'], [track['uri']])
+                            print(f'\t\t\tAdded track "{track['name']}" to existing playlist "{existing_playlist['name']}".')
                     else:
                         print(f'\t\t\tTrack "{track['name']}" already exists in playlist "{existing_playlist['name']}". Skipping.')
                 continue
 
             yearly_playlist_name = f'{yearly_playlist_prefix}{year}{yearly_playlist_suffix}'
+
+            if args.dry_run:
+                print(f'\t\tWould create playlist "{yearly_playlist_name}" with {len(tracks)} tracks.')
+                continue
 
             my_user = sp.current_user()
 

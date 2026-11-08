@@ -17,6 +17,19 @@
       }
     },
     {
+      "name": "Local Dry Run - Linux",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "main.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "python": "${workspaceFolder}/.venv/bin/python",
+      "args": ["--dry-run"],
+      "env": {
+        "LOCAL_RUN": "true"
+      }
+    },
+    {
       "name": "Local Run - Windows",
       "type": "debugpy",
       "request": "launch",
@@ -24,6 +37,19 @@
       "console": "integratedTerminal",
       "justMyCode": true,
       "python": "${workspaceFolder}/.venv/Scripts/python.exe",
+      "env": {
+        "LOCAL_RUN": "true"
+      }
+    },
+    {
+      "name": "Local Dry Run - Windows",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "main.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "python": "${workspaceFolder}/.venv/Scripts/python.exe",
+      "args": ["--dry-run"],
       "env": {
         "LOCAL_RUN": "true"
       }
